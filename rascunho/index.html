@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ENEM Study — Home</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>ENEM Study</h1>
+      <p class="muted">Aulas e exercícios para estudar pro ENEM — sem instalação</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <input id="search" placeholder="Pesquisar aulas, tags ou termos..." />
+      <a class="btn" href="simulado.html">Ir para Simulado</a>
+    </section>
+
+    <section id="list" class="grid"></section>
+
+    <hr />
+
+    <section id="lesson-area" class="lesson-area" hidden>
+      <button id="back" class="link">← Voltar</button>
+      <h2 id="lesson-title"></h2>
+      <p id="lesson-summary" class="muted"></p>
+      <article id="lesson-content" class="content"></article>
+
+      <h3>Exercícios relacionados</h3>
+      <div id="related" class="exercises"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Protótipo — você pode editar e publicar sem instalar nada.</div>
+  </footer>
+</body>
+</html>
