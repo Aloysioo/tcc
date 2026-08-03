@@ -1,45 +1,149 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ENEM Study — Home</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Aulas rápidas, exercícios e simulados para organizar seus estudos para o ENEM.">
+  <meta name="theme-color" content="#17352f">
+  <title>Ponto de Virada — Estudos para o ENEM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <script defer src="data.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <h1>ENEM Study</h1>
-      <p class="muted">Aulas e exercícios para estudar pro ENEM — sem instalação</p>
-    </div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Ponto de Virada, início">
+      <span class="brand-mark">PV</span>
+      <span>Ponto de <em>Virada</em></span>
+    </a>
+    <nav class="nav" aria-label="Navegação principal">
+      <a href="#aulas">Aulas</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a class="nav-cta" href="simulado.html">Fazer simulado <span aria-hidden="true">↗</span></a>
+    </nav>
+    <button class="menu-button" type="button" aria-expanded="false" aria-label="Abrir menu">
+      <span></span><span></span>
+    </button>
   </header>
 
-  <main class="container">
-    <section class="controls">
-      <input id="search" placeholder="Pesquisar aulas, tags ou termos..." />
-      <a class="btn" href="simulado.html">Ir para Simulado</a>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span></span> Seu ritmo. Seu resultado.</p>
+        <h1 id="hero-title">Estudar pode ser o seu <em>ponto de virada.</em></h1>
+        <p class="hero-text">Conteúdo direto, exercícios com correção e simulados para você entender o que já domina — e o que precisa revisar.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#aulas">Começar a estudar <span aria-hidden="true">→</span></a>
+          <a class="text-link" href="simulado.html"><span class="play" aria-hidden="true">▶</span> Testar meus conhecimentos</a>
+        </div>
+        <div class="student-note">
+          <div class="avatars" aria-hidden="true"><span>MA</span><span>JL</span><span>RC</span></div>
+          <p><strong>Feito para a vida real.</strong><br>Estude em sessões curtas, até pelo celular.</p>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal reveal-delay" aria-label="Exemplo de organização semanal de estudos">
+        <div class="sun-shape" aria-hidden="true"></div>
+        <div class="paper-card schedule-card">
+          <div class="paper-header">
+            <span>Plano de hoje</span>
+            <span class="date-chip">3 blocos</span>
+          </div>
+          <h2>Quarta é dia de avançar.</h2>
+          <div class="study-list">
+            <div class="study-item done"><span class="check">✓</span><div><strong>Funções</strong><small>Matemática · 18 min</small></div><span>100%</span></div>
+            <div class="study-item active"><span class="subject-dot coral"></span><div><strong>Ecologia</strong><small>Biologia · 24 min</small></div><span>60%</span></div>
+            <div class="study-item"><span class="subject-dot yellow"></span><div><strong>Modernismo</strong><small>Linguagens · 15 min</small></div><span>0%</span></div>
+          </div>
+        </div>
+        <div class="score-card">
+          <span>Sequência atual</span>
+          <strong>06 <small>dias</small></strong>
+          <div class="week-dots" aria-label="Seis dias de estudo concluídos">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i class="empty"></i>
+          </div>
+        </div>
+        <div class="scribble" aria-hidden="true">Continue<br><em>assim!</em></div>
+      </div>
     </section>
 
-    <section id="list" class="grid"></section>
+    <section class="ticker" aria-label="Recursos disponíveis">
+      <div><span>Aulas objetivas</span><i>✦</i><span>Questões comentadas</span><i>✦</i><span>Simulados cronometrados</span><i>✦</i><span>Estudo sem enrolação</span><i>✦</i></div>
+    </section>
 
-    <hr />
+    <section class="lessons-section" id="aulas" aria-labelledby="lessons-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow"><span></span> Biblioteca de aulas</p>
+          <h2 id="lessons-title">Escolha um assunto.<br><em>Comece agora.</em></h2>
+        </div>
+        <p>Encontre uma aula por matéria ou pesquise aquele tema que não sai da sua cabeça.</p>
+      </div>
 
-    <section id="lesson-area" class="lesson-area" hidden>
-      <button id="back" class="link">← Voltar</button>
-      <h2 id="lesson-title"></h2>
-      <p id="lesson-summary" class="muted"></p>
-      <article id="lesson-content" class="content"></article>
+      <div class="lesson-tools">
+        <div class="search-wrap">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          <label class="sr-only" for="search">Pesquisar aulas</label>
+          <input id="search" type="search" placeholder="Busque por função, ecologia, gramática..." autocomplete="off">
+        </div>
+        <div class="filters" id="filters" aria-label="Filtrar aulas por matéria"></div>
+      </div>
 
-      <h3>Exercícios relacionados</h3>
-      <div id="related" class="exercises"></div>
+      <div class="lesson-grid" id="lesson-grid" aria-live="polite"></div>
+      <div class="empty-state" id="empty-state" hidden>
+        <span>?</span>
+        <h3>Nenhuma aula por aqui</h3>
+        <p>Tente outro termo ou escolha “Todas”.</p>
+      </div>
+    </section>
+
+    <section class="method-section" id="como-funciona" aria-labelledby="method-title">
+      <div class="method-intro">
+        <p class="eyebrow light"><span></span> Um passo de cada vez</p>
+        <h2 id="method-title">Menos pressão.<br><em>Mais direção.</em></h2>
+        <p>Você não precisa estudar tudo de uma vez. Precisa saber qual é o próximo passo.</p>
+        <a class="button button-light" href="simulado.html">Montar meu simulado <span aria-hidden="true">→</span></a>
+      </div>
+      <ol class="method-steps">
+        <li><span>01</span><div><h3>Escolha um tema</h3><p>Comece pelo assunto que mais precisa de atenção hoje.</p></div></li>
+        <li><span>02</span><div><h3>Aprenda o essencial</h3><p>Leia a aula rápida e fixe com uma questão comentada.</p></div></li>
+        <li><span>03</span><div><h3>Teste seu progresso</h3><p>Faça um simulado, veja o resultado e ajuste a rota.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="final-cta">
+      <p>Não espere se sentir pronto.</p>
+      <h2>O primeiro passo<br>é só <em>começar.</em></h2>
+      <a class="button button-primary" href="simulado.html">Fazer simulado agora <span aria-hidden="true">↗</span></a>
+      <span class="cta-doodle" aria-hidden="true">✦</span>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">Protótipo — você pode editar e publicar sem instalar nada.</div>
+  <footer class="footer">
+    <a class="brand footer-brand" href="index.html"><span class="brand-mark">PV</span><span>Ponto de <em>Virada</em></span></a>
+    <p>Uma ferramenta gratuita para estudar com mais clareza.</p>
+    <p>Feito para quem está construindo o próximo capítulo.</p>
   </footer>
+
+  <dialog class="lesson-modal" id="lesson-modal">
+    <div class="modal-shell">
+      <button class="modal-close" type="button" aria-label="Fechar aula">×</button>
+      <div class="modal-meta"><span id="modal-subject"></span><span id="modal-time"></span></div>
+      <h2 id="modal-title"></h2>
+      <p class="modal-summary" id="modal-summary"></p>
+      <article class="lesson-content" id="modal-content"></article>
+      <section class="quick-exercise" id="quick-exercise" aria-labelledby="exercise-title">
+        <p class="eyebrow"><span></span> Hora de praticar</p>
+        <h3 id="exercise-title">Questão rápida</h3>
+        <p id="exercise-statement"></p>
+        <div class="choice-list" id="choice-list"></div>
+        <div class="feedback" id="feedback" role="status" hidden></div>
+      </section>
+    </div>
+  </dialog>
 </body>
 </html>

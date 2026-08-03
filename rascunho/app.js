@@ -1,101 +1,130 @@
-// app.js — versão defensiva
 (() => {
-  const SITE = window.SITE_DATA || {}
-  const aulas = Array.isArray(SITE.aulas) ? SITE.aulas : []
-  const questions = Array.isArray(SITE.questions) ? SITE.questions : []
+  const data = window.STUDY_DATA || { lessons: [], questions: [] };
+  const lessonGrid = document.querySelector("#lesson-grid");
+  const search = document.querySelector("#search");
+  const filters = document.querySelector("#filters");
+  const emptyState = document.querySelector("#empty-state");
+  const modal = document.querySelector("#lesson-modal");
+  const menuButton = document.querySelector(".menu-button");
+  const nav = document.querySelector(".nav");
 
-  const listEl = document.getElementById('list')
-  const searchEl = document.getElementById('search')
-  const lessonArea = document.getElementById('lesson-area')
-  const lessonTitle = document.getElementById('lesson-title')
-  const lessonSummary = document.getElementById('lesson-summary')
-  const lessonContent = document.getElementById('lesson-content')
-  const relatedEl = document.getElementById('related')
-  const backBtn = document.getElementById('back')
+  let activeSubject = "Todas";
+  let searchTerm = "";
 
-  if (!listEl) {
-    console.error('Elemento #list não encontrado no HTML.')
-    return
+  const normalize = (value) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  function renderFilters() {
+    const subjects = ["Todas", ...new Set(data.lessons.map((lesson) => lesson.subject))];
+    filters.innerHTML = subjects.map((subject) => `
+      <button type="button" class="filter-button ${subject === activeSubject ? "active" : ""}" data-subject="${subject}">${subject}</button>
+    `).join("");
   }
 
-  function renderList(items) {
-    listEl.innerHTML = ''
-    items.forEach(a => {
-      const card = document.createElement('article')
-      card.className = 'card'
-      card.innerHTML = <h3>${a.title}</h3><div class="muted">${a.subject} • ${(a.tags||[]).join(' • ')}</div><p class="muted" style="margin-top:8px">${a.summary}</p>
-      card.addEventListener('click', () => showLesson(a.id))
-      listEl.appendChild(card)
-    })
+  function renderLessons() {
+    const term = normalize(searchTerm);
+    const visibleLessons = data.lessons.filter((lesson) => {
+      const matchesSubject = activeSubject === "Todas" || lesson.subject === activeSubject;
+      const haystack = normalize(`${lesson.title} ${lesson.summary} ${lesson.subject}`);
+      return matchesSubject && haystack.includes(term);
+    });
+
+    lessonGrid.innerHTML = visibleLessons.map((lesson, index) => `
+      <article class="lesson-card color-${lesson.color}" style="--delay: ${index * 55}ms">
+        <button type="button" data-lesson="${lesson.id}" aria-label="Abrir aula ${lesson.title}">
+          <div class="lesson-topline"><span>${lesson.subject}</span><span>${lesson.time} min</span></div>
+          <div class="lesson-number">${String(data.lessons.indexOf(lesson) + 1).padStart(2, "0")}</div>
+          <h3>${lesson.title}</h3>
+          <p>${lesson.summary}</p>
+          <div class="lesson-footer"><span>${lesson.level}</span><i aria-hidden="true">↗</i></div>
+        </button>
+      </article>
+    `).join("");
+
+    emptyState.hidden = visibleLessons.length > 0;
   }
 
-  function showLesson(id) {
-    const a = aulas.find(x => x.id === id)
-    if (!a) return
-    if (lessonTitle) lessonTitle.textContent = a.title
-    if (lessonSummary) lessonSummary.textContent = a.summary
-    if (lessonContent) lessonContent.innerHTML = a.content
+  function openLesson(id) {
+    const lesson = data.lessons.find((item) => item.id === id);
+    const question = data.questions.find((item) => item.topic === id);
+    if (!lesson) return;
 
-    if (!relatedEl) return
-    relatedEl.innerHTML = ''
-    const related = questions.filter(q => q.topic === a.id || q.subject === a.subject).slice(0, 6)
-    if (related.length === 0) {
-      relatedEl.innerHTML = '<p class="muted">Nenhuma questão relacionada.</p>'
-      return
+    document.querySelector("#modal-subject").textContent = lesson.subject;
+    document.querySelector("#modal-time").textContent = `${lesson.time} min de leitura`;
+    document.querySelector("#modal-title").textContent = lesson.title;
+    document.querySelector("#modal-summary").textContent = lesson.summary;
+    document.querySelector("#modal-content").innerHTML = lesson.content;
+
+    const exercise = document.querySelector("#quick-exercise");
+    const choices = document.querySelector("#choice-list");
+    const feedback = document.querySelector("#feedback");
+    feedback.hidden = true;
+    feedback.className = "feedback";
+
+    if (question) {
+      exercise.hidden = false;
+      document.querySelector("#exercise-statement").textContent = question.statement;
+      choices.innerHTML = question.choices.map((choice, index) => `
+        <button type="button" data-choice="${index}"><span>${String.fromCharCode(65 + index)}</span>${choice}</button>
+      `).join("");
+      choices.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => checkAnswer(button, question));
+      });
+    } else {
+      exercise.hidden = true;
     }
-    related.forEach(q => {
-      const ex = document.createElement('div')
-      ex.className = 'exercise'
-      ex.innerHTML = <div><strong>${q.statement}</strong></div>
-      const choices = document.createElement('div')
-      (q.choices || []).forEach(c => {
-        const btn = document.createElement('button')
-        btn.textContent = ${c.label} — ${c.text}
-        btn.addEventListener('click', () => {
-          const ok = c.id === q.correctChoiceId
-          alert((ok ? 'Correto! ' : 'Incorreto. ') + '\n' + (q.explanation || ''))
-        })
-        choices.appendChild(btn)
-      })
-      ex.appendChild(choices)
-      relatedEl.appendChild(ex)
-    })
-    if (lessonArea) lessonArea.hidden = false
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    modal.showModal();
+    document.body.classList.add("modal-open");
   }
 
-  if (backBtn && lessonArea) {
-    backBtn.addEventListener('click', () => {
-      lessonArea.hidden = true
-    })
+  function checkAnswer(button, question) {
+    const selected = Number(button.dataset.choice);
+    const feedback = document.querySelector("#feedback");
+    const choiceButtons = document.querySelectorAll("#choice-list button");
+    choiceButtons.forEach((item, index) => {
+      item.disabled = true;
+      if (index === question.answer) item.classList.add("correct");
+    });
+    if (selected !== question.answer) button.classList.add("incorrect");
+    feedback.hidden = false;
+    feedback.classList.add(selected === question.answer ? "success" : "error");
+    feedback.innerHTML = `<strong>${selected === question.answer ? "Boa! Resposta correta." : "Quase! Vale revisar."}</strong><p>${question.explanation}</p>`;
   }
 
-  // Setup Fuse (se disponível)
-  if (typeof Fuse === 'undefined') {
-    console.warn('Fuse.js não encontrado — busca ficará desabilitada.')
-    renderList(aulas)
-  } else {
-    try {
-      const fuse = new Fuse(aulas, { keys: ['title','tags','summary','subject'], threshold: 0.3 })
-      function doSearch(q) {
-        if (!q) renderList(aulas)
-        else {
-          const res = fuse.search(q).map(r => r.item)
-          renderList(res)
-        }
-      }
-      if (searchEl) {
-        searchEl.addEventListener('input', e => doSearch(e.currentTarget.value))
-      } else {
-        console.warn('Elemento #search não encontrado — não será possível pesquisar.')
-        renderList(aulas)
-      }
-    } catch (err) {
-      console.error('Erro ao configurar Fuse:', err)
-      renderList(aulas)
-    }
-  }
+  filters.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-subject]");
+    if (!button) return;
+    activeSubject = button.dataset.subject;
+    renderFilters();
+    renderLessons();
+  });
 
-  // initial render (se ainda não renderizou)
-  if (!listEl.innerHTML.trim()) renderList(aulas)
+  lessonGrid.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-lesson]");
+    if (button) openLesson(button.dataset.lesson);
+  });
+
+  search.addEventListener("input", (event) => {
+    searchTerm = event.target.value.trim();
+    renderLessons();
+  });
+
+  modal.querySelector(".modal-close").addEventListener("click", () => modal.close());
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) modal.close();
+  });
+  modal.addEventListener("close", () => document.body.classList.remove("modal-open"));
+
+  menuButton.addEventListener("click", () => {
+    const open = menuButton.getAttribute("aria-expanded") === "true";
+    menuButton.setAttribute("aria-expanded", String(!open));
+    nav.classList.toggle("open", !open);
+  });
+  nav.addEventListener("click", () => {
+    nav.classList.remove("open");
+    menuButton.setAttribute("aria-expanded", "false");
+  });
+
+  renderFilters();
+  renderLessons();
 })();
