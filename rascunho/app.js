@@ -1,3 +1,4 @@
+
 (() => {
   const data = window.STUDY_DATA || { lessons: [], questions: [] };
   const lessonGrid = document.querySelector("#lesson-grid");

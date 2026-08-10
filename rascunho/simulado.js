@@ -1,4 +1,3 @@
-
 (() => {
   const questions = window.STUDY_DATA?.questions || [];
   const config = document.querySelector("#quiz-config");

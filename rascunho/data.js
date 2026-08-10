@@ -1,4 +1,4 @@
-window.STUDY_DATA = {
+STUDY_DATA = {
   lessons: [
     {
       id: "funcoes",
